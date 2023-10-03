@@ -1,8 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const Customer = require("./models/customer");
 
 const app = express();
+app.use(cors());
 mongoose.set("strictQuery", false);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -35,6 +37,44 @@ app.get("/customers", async (req, res) => {
     res.json({ customers: result });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/customers/:id", async (req, res) => {
+  console.log({ requestParams: req.params, requestQuery: req.query });
+  try {
+    const { id: customerId } = req.params;
+    console.log(customerId);
+    const customer = await Customer.findById(customerId);
+    console.log(customer);
+    if (!customer) {
+      res.status(404).json({ error: "Not found!" });
+    } else {
+      res.json({ customer });
+    }
+  } catch (err) {
+    res.status(500).json({ err: "Something went wrong!" });
+  }
+});
+
+app.put("/customers/:id", async (req, res) => {
+  try {
+    const customerId = req.params.id;
+    const result = await Customer.replaceOne({ _id: customerId }, req.body);
+    console.log(result);
+    res.json({ updateCount: result.modifiedCount });
+  } catch (err) {
+    res.status(500).json({ error: "Not found customer" });
+  }
+});
+
+app.delete("/customers/:id", async (req, res) => {
+  try {
+    const customerId = req.params.id;
+    const result = await Customer.deleteOne({ _id: customerId });
+    res.json({ deletedCount: result.deletedCount });
+  } catch (err) {
+    res.status(500).json({ error: "content not found" });
   }
 });
 
