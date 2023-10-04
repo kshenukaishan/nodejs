@@ -60,11 +60,51 @@ app.get("/customers/:id", async (req, res) => {
 app.put("/customers/:id", async (req, res) => {
   try {
     const customerId = req.params.id;
-    const result = await Customer.replaceOne({ _id: customerId }, req.body);
-    console.log(result);
-    res.json({ updateCount: result.modifiedCount });
+    const customer = await Customer.findOneAndReplace(
+      { _id: customerId },
+      req.body,
+      { new: true }
+    );
+    console.log(customer);
+    res.json({ customer });
   } catch (err) {
     res.status(500).json({ error: "Not found customer" });
+  }
+});
+
+app.patch("/customers/:id", async (req, res) => {
+  try {
+    const customerId = req.params.id;
+    const customer = await Customer.findOneAndUpdate(
+      { _id: customerId },
+      req.body,
+      { new: true }
+    );
+    console.log(customer);
+    res.json({ customer });
+  } catch (err) {
+    res.status(500).json({ error: "Not found customer" });
+  }
+});
+
+app.patch("/orders/:id", async (req, res) => {
+  console.log(req.params);
+  const orderId = req.params.id;
+  req.body._id = orderId;
+  try {
+    const result = await Customer.findByIdAndUpdate(
+      { "orders._id": orderId },
+      { $set: { "orders.$": req.body } },
+      { new: true }
+    );
+    console.log(result);
+    if (result) {
+      res.send(result);
+    } else {
+      res.status(404).jssn({ error: "Something went wromg" });
+    }
+  } catch (e) {
+    res.status(500).json({ error: "Soemthing went wrong" });
   }
 });
 
