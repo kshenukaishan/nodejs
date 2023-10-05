@@ -96,7 +96,7 @@ app.patch("/orders/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
             res.send(result);
         }
         else {
-            res.status(404).jssn({ error: "Something went wromg" });
+            res.status(404).json({ error: "Something went wromg" });
         }
     }
     catch (e) {

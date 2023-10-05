@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 // const Customer = require("./models/customer");
 import { Customer } from "./models/customer";
+import { Request, Response } from "express";
 
 const app = express();
 app.use(cors());
@@ -28,11 +29,11 @@ const customer = new Customer({
   industry: "IT",
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Welcome!");
 });
 
-app.get("/customers", async (req, res) => {
+app.get("/customers", async (req: Request, res: Response) => {
   try {
     const result = await Customer.find();
     res.json({ customers: result });
@@ -41,7 +42,7 @@ app.get("/customers", async (req, res) => {
   }
 });
 
-app.get("/customers/:id", async (req, res) => {
+app.get("/customers/:id", async (req: Request, res: Response) => {
   console.log({ requestParams: req.params, requestQuery: req.query });
   try {
     const { id: customerId } = req.params;
@@ -58,7 +59,7 @@ app.get("/customers/:id", async (req, res) => {
   }
 });
 
-app.put("/customers/:id", async (req, res) => {
+app.put("/customers/:id", async (req: Request, res: Response) => {
   try {
     const customerId = req.params.id;
     const customer = await Customer.findOneAndReplace(
@@ -73,7 +74,7 @@ app.put("/customers/:id", async (req, res) => {
   }
 });
 
-app.patch("/customers/:id", async (req, res) => {
+app.patch("/customers/:id", async (req: Request, res: Response) => {
   try {
     const customerId = req.params.id;
     const customer = await Customer.findOneAndUpdate(
@@ -88,7 +89,7 @@ app.patch("/customers/:id", async (req, res) => {
   }
 });
 
-app.patch("/orders/:id", async (req, res) => {
+app.patch("/orders/:id", async (req: Request, res: Response) => {
   console.log(req.params);
   const orderId = req.params.id;
   req.body._id = orderId;
@@ -102,14 +103,14 @@ app.patch("/orders/:id", async (req, res) => {
     if (result) {
       res.send(result);
     } else {
-      res.status(404).jssn({ error: "Something went wromg" });
+      res.status(404).json({ error: "Something went wromg" });
     }
   } catch (e) {
     res.status(500).json({ error: "Soemthing went wrong" });
   }
 });
 
-app.get("/orders/:id", async (req, res) => {
+app.get("/orders/:id", async (req: Request, res: Response) => {
   try {
     const result = await Customer.findOne({ "orders._id": req.params.id });
     if (result) {
@@ -123,7 +124,7 @@ app.get("/orders/:id", async (req, res) => {
   }
 });
 
-app.delete("/customers/:id", async (req, res) => {
+app.delete("/customers/:id", async (req: Request, res: Response) => {
   try {
     const customerId = req.params.id;
     const result = await Customer.deleteOne({ _id: customerId });
@@ -133,7 +134,7 @@ app.delete("/customers/:id", async (req, res) => {
   }
 });
 
-app.post("/customers", async (req, res) => {
+app.post("/customers", async (req: Request, res: Response) => {
   console.log(req.body);
   const customer = new Customer(req.body);
   try {
@@ -144,7 +145,7 @@ app.post("/customers", async (req, res) => {
   }
 });
 
-app.post("/", (req, res) => {
+app.post("/", (req: Request, res: Response) => {
   res.send("Post request");
 });
 
